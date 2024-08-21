@@ -17,6 +17,9 @@ const sortAndMoveTabsByConfig = function(tabs) {
 
 const sortAndMoveTabs = function(tabs, sortType) {
     const sortedTabs = tabs.slice().sort((a, b) => {
+        if (sortType == 'lur') {
+            return -sortByLastAccessed(a.lastAccessed, b.lastAccessed)
+        }
         let preTitle = a.title
         preTitle = preTitle.toLowerCase()
         let nextTitle = b.title
@@ -59,4 +62,21 @@ const sortByDicAsc = function(preStr, nextStr) {
 
     // 如果第一个字符相同，继续比较下一个字符
     return sortByDicAsc(preStr.slice(1), nextStr.slice(1))
+}
+
+const sortByLastAccessed = function(preTime, nextTime) {
+    if (!preTime) {
+        preTime = 0
+    }
+    if (!nextTime) {
+        nextTime = 0
+    }
+    if (preTime < nextTime) {
+        return -1
+    }
+    if (preTime > nextTime) {
+        return 1
+    }
+
+    return 0
 }
