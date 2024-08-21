@@ -1,0 +1,28 @@
+
+#group-tabs {
+  width: 20rem;
+}
+.group {
+  margin-bottom: 10px;
+}
+
+.group-header {
+  cursor: pointer;
+  padding: 10px;
+  background-color: #f0f0f0;
+  line-height: 25px;
+}
+
+.group-header:hover {
+  background-color: #ddd;
+}
+
+.group-content {
+  display: none;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.group-content.show {
+  display: block;
+}

@@ -1,0 +1,11 @@
+{
+    "manifest_version": 3,
+    "name": "Multi Session",
+    "description": "多登录态管理",
+    "version": "1.0",
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": "images/icon.png"
+    },
+    "permissions": ["activeTab", "scripting", "tabGroups", "tabs"]
+  }
