@@ -1,13 +1,27 @@
 {
-    "manifest_version": 3,
-    "name": "Tab Sorter",
-    "description": "窗口根据标题字典排序",
-    "version": "1.0",
-    "action": {
-        "default_icon": "sort-ascending.png"
-    },
-    "background": {
-      "service_worker": "background.js"
-    },
-    "permissions": ["activeTab", "scripting", "tabs"]
+  "manifest_version": 3,
+  "name": "Tab Sorter",
+  "description": "窗口根据标题字典排序",
+  "version": "1.0",
+  "action": {
+    "default_icon": {
+      "16": "sort-ascending.png",
+      "32": "sort-ascending.png",
+      "48": "sort-ascending.png",
+      "128": "sort-ascending.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs",
+    "storage"
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
   }
+}
