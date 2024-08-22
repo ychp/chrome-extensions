@@ -5,7 +5,7 @@
     "version": "1.0",
     "action": {
         "default_popup": "index.html",
-        "default_icon": "images/icon.png"
+        "default_icon": "multi-session.png"
     },
     "permissions": [
         "activeTab",
