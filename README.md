@@ -1,6 +1,6 @@
 # 谷歌浏览器插件
 
-## multi-login
+## multi-session
 
 同窗口多登录态组件 (开发中)
 
