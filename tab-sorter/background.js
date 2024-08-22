@@ -60,6 +60,18 @@ const sortByDicAsc = function(preStr, nextStr) {
         return 1
     }
 
+    if (preStr.length == 0 && nextStr.length != 0) {
+        return -1;
+    }
+
+    if (preStr.length != 0 && nextStr.length == 0) {
+        return 1;
+    }
+
+    if (preStr == '' && nextStr == '') {
+        return 0;
+    }
+
     // 如果第一个字符相同，继续比较下一个字符
     return sortByDicAsc(preStr.slice(1), nextStr.slice(1))
 }
