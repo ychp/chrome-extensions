@@ -11,6 +11,12 @@
       "128": "sort-ascending.png"
     }
   },
+  "icons": {
+    "16": "sort-ascending.png",
+    "32": "sort-ascending.png",
+    "48": "sort-ascending.png",
+    "128": "sort-ascending.png"
+  },
   "background": {
     "service_worker": "background.js"
   },

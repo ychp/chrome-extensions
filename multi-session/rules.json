@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+    "requestHeaders": [{ "header": "cookie", "operation": "remove" }]
+        },
+        "condition": {
+            "regexFilter": "(.*)(<script>)",
+            "resourceTypes": [
+                "main_frame",
+                "sub_frame",
+                "stylesheet",
+                "script",
+                "image",
+                "object",
+                "xml_http_request",
+                "other"
+            ]
+        }
+    }
+]

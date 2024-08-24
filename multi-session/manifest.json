@@ -1,17 +1,36 @@
 {
-    "manifest_version": 3,
-    "name": "Multi Session",
-    "description": "多登录态管理",
-    "version": "1.0",
-    "action": {
-        "default_popup": "index.html",
-        "default_icon": "multi-session.png"
-    },
-    "permissions": [
-        "activeTab",
-        "scripting",
-        "tabGroups",
-        "tabs",
-        "storage"
+  "manifest_version": 3,
+  "name": "Multi Session",
+  "description": "多登录态管理",
+  "version": "1.0",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "multi-session.png"
+  },
+  "icons" : {
+    "16": "multi-session.png",
+    "32": "multi-session.png",
+    "48": "multi-session.png",
+    "128": "multi-session.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabGroups",
+    "tabs",
+    "storage",
+    "declarativeNetRequest",
+    "<all_urls>"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "seesion_rules",
+        "path": "rules.json"
+      }
     ]
+  }
 }
