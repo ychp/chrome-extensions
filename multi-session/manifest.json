@@ -22,14 +22,14 @@
     "tabGroups",
     "tabs",
     "storage",
-    "declarativeNetRequest",
-    "<all_urls>"
+    "declarativeNetRequest"
   ],
   "declarative_net_request": {
     "rule_resources": [
       {
         "id": "seesion_rules",
-        "path": "rules.json"
+        "path": "rules.json",
+        "enabled": true
       }
     ]
   }
