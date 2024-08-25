@@ -120,3 +120,4 @@ function updateBadgeText(text) {
 
 // 初始化 badge text
 refreshTabCount()
+

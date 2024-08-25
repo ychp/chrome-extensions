@@ -9,7 +9,17 @@
       "32": "sort-ascending.png",
       "48": "sort-ascending.png",
       "128": "sort-ascending.png"
-    }
+    },
+    "default_popup_menu_items" : [
+      {
+        "title": "Sort tabs",
+        "onclick": "sortAndMoveTabsByConfig()"
+      },
+      {
+        "title": "Remove duplicates",
+        "onclick": "removeDuplicates()"
+      }
+    ]
   },
   "icons": {
     "16": "sort-ascending.png",
@@ -27,7 +37,6 @@
     "storage"
   ],
   "options_ui": {
-    "page": "options.html",
-    "open_in_tab": false
+    "page": "options.html"
   }
 }
