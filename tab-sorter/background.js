@@ -5,7 +5,6 @@ chrome.action.onClicked.addListener(async (tab) => {
 })
 
 
-
 const sortAndMoveTabsByConfig = function(tabs) {
     chrome.storage.sync.get(
         { type: 'dicAsc' },
@@ -92,3 +91,32 @@ const sortByLastAccessed = function(preTime, nextTime) {
 
     return 0
 }
+
+
+// 统计tab数量
+let tabCount = 0;
+
+chrome.tabs.onCreated.addListener(() => {
+  tabCount++;
+  updateBadgeText(tabCount.toString());
+});
+
+chrome.tabs.onRemoved.addListener(() => {
+  tabCount--;
+  updateBadgeText(tabCount.toString());
+});
+
+const refreshTabCount = function() {
+    chrome.tabs.query({}, (tabs) => {
+        tabCount = tabs.length
+        updateBadgeText(tabCount.toString())
+    })
+}
+
+function updateBadgeText(text) {
+  chrome.action.setBadgeText({ text })
+  chrome.action.setTitle({ title: `Tab count is ${text}` })
+}
+
+// 初始化 badge text
+refreshTabCount()
