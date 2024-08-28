@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Tab Sorter",
-  "description": "窗口根据标题字典排序",
+  "description": "窗口数量统计&窗口排序",
   "version": "1.0",
   "action": {
     "default_icon": {
