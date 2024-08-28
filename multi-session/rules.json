@@ -1,29 +1,27 @@
 [
     {
-      "id": 1,
-      "priority": 1,
-      "action": {
-        "type": "modifyHeaders",
-        "responseHeaders": [
-          {
-            "header": "set-cookie",
-            "operation": "appendPrefix",
-            "value": "${groupId}"
-          }
-        ]
-      },
-      "condition": {
-        "regexFilter": "^.*$",
-        "resourceTypes": [
-          "main_frame",
-          "sub_frame",
-          "stylesheet",
-          "script",
-          "image",
-          "object",
-          "xml_http_request",
-          "other"
-        ]
-      }
+        "id": 1,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+            "responseHeaders": [
+                {
+                    "header": "set-cookie",
+                    "operation": "append",
+                    "value": "${groupId}"
+                }
+            ]
+        },
+        "condition": {
+            "resourceTypes": [
+                "main_frame",
+                "sub_frame",
+                "stylesheet",
+                "script",
+                "image",
+                "object",
+                "xmlhttprequest"
+            ]
+        }
     }
-  ]
+]
