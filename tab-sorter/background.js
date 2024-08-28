@@ -97,14 +97,12 @@ const sortByLastAccessed = function(preTime, nextTime) {
 let tabCount = 0;
 
 chrome.tabs.onCreated.addListener(() => {
-  tabCount++;
-  updateBadgeText(tabCount.toString());
-});
+    refreshTabCount()
+})
 
 chrome.tabs.onRemoved.addListener(() => {
-  tabCount--;
-  updateBadgeText(tabCount.toString());
-});
+    refreshTabCount()
+})
 
 const refreshTabCount = function() {
     chrome.tabs.query({}, (tabs) => {
