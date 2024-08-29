@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Favorite Sync",
+  "description": "收藏夹同步",
+  "version": "1.0",
+  "action": {
+    "default_icon": {
+      "16": "favorites.png",
+      "32": "favorites.png",
+      "48": "favorites.png",
+      "128": "favorites.png"
+    }
+  },
+  "icons": {
+    "16": "favorites.png",
+    "32": "favorites.png",
+    "48": "favorites.png",
+    "128": "favorites.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabGroups",
+    "tabs"
+  ]
+}
