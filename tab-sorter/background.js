@@ -105,7 +105,7 @@ chrome.tabs.onRemoved.addListener(() => {
 })
 
 const refreshTabCount = function() {
-    chrome.tabs.query({}, (tabs) => {
+    chrome.tabs.query({ currentWindow: true }, (tabs) => {
         tabCount = tabs.length
         updateBadgeText(tabCount.toString())
     })
