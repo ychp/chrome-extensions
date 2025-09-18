@@ -1,0 +1,11 @@
+{
+  "name": "com.ychp.arc.export_pins",
+  "description": "Arc pinned tabs exporter host",
+  "path": "/Users/yingchengpeng/ychp/chrome/favorite-sync/native-host.sh",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://abcdefghijklmnopqrstuvwxyzabcdef/"
+  ]
+}
+
+

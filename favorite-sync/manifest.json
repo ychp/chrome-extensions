@@ -24,6 +24,9 @@
     "activeTab",
     "scripting",
     "tabGroups",
-    "tabs"
+    "tabs",
+    "downloads",
+    "nativeMessaging"
+    ,"bookmarks"
   ]
 }
