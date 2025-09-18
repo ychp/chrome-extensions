@@ -46,14 +46,9 @@ async function main() {
         // Run exporter as a module to avoid spawning extra processes
         const { exportSpacesToHtmlStrings } = require('./arc-export.js');
         const results = exportSpacesToHtmlStrings(input);
-        const files = [];
-        for (const r of results) {
-            const filePath = path.join(outDir, (r.spaceName || 'Arc Space') + '.html');
-            fs.writeFileSync(filePath, r.html, 'utf8');
-            files.push(filePath);
-        }
-        log('exported files: ' + files.join(', '));
-        writeMessage({ ok: true, files });
+        const contents = results.map(r => ({ name: (r.spaceName || 'Arc Space') + '.html', html: r.html }));
+        log('prepared in-memory files: ' + contents.map(c => c.name).join(', '));
+        writeMessage({ ok: true, contents });
     } catch (e) {
         log('error: ' + String(e && e.stack || e));
         try { writeMessage({ ok: false, error: String(e && e.stack || e) }); } catch (_) {}

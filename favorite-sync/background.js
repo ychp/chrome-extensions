@@ -284,15 +284,14 @@ async function tryNativeHostExport() {
             try { port.postMessage({ cmd: 'export' }); } catch (e) { reject(e); }
             setTimeout(() => { if (!settled) { settled = true; resolve(null); } }, 5000);
         });
-        if (response && response.ok && Array.isArray(response.files) && response.files.length > 0) {
-            // Trigger downloads for produced files
-            for (const f of response.files) {
-                const pathUrl = 'file://' + f; // Arc allows file downloads open? We re-download via Blob for safety
-                try {
-                    await chrome.downloads.download({ url: pathUrl, filename: f.split('/').pop(), saveAs: true });
-                } catch (e) {
-                    // As an alternative, read the file is not allowed; skip here.
-                }
+        if (response && response.ok && Array.isArray(response.contents) && response.contents.length > 0) {
+            for (const item of response.contents) {
+                const fileName = typeof item.name === 'string' && item.name.trim().length > 0 ? item.name.trim() : FILE_NAME;
+                const html = typeof item.html === 'string' ? item.html : '';
+                const blobUrl = (typeof URL === 'object' && typeof URL.createObjectURL === 'function')
+                    ? URL.createObjectURL(new Blob([html], { type: MIME_TYPE_HTML_UTF8 }))
+                    : DATA_URL_PREFIX + encodeURIComponent(html);
+                await chrome.downloads.download({ url: blobUrl, filename: fileName, saveAs: true });
             }
             return { downloaded: true };
         }
