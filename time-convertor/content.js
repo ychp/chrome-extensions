@@ -12,7 +12,6 @@ class TimeConvertor {
   }
 
   init() {
-    this.log('info', 'content_init');
     // 监听文本选择事件
     document.addEventListener('mouseup', this.handleTextSelection.bind(this));
     document.addEventListener('keyup', this.handleTextSelection.bind(this));
@@ -24,35 +23,20 @@ class TimeConvertor {
     window.addEventListener('scroll', this.handleScroll.bind(this));
   }
 
-  // 轻量日志：把日志发到后台记录
-  log(level, message, meta) {
-    try {
-      if (typeof console !== 'undefined' && typeof console.log === 'function') {
-        if (meta !== undefined) {
-          console.log(`[TimeConvertor][${level}] ${message}`, meta);
-        } else {
-          console.log(`[TimeConvertor][${level}] ${message}`);
-        }
-      }
-    } catch (e) {}
-  }
+  // 无日志版本
 
   /**
    * 处理文本选择事件
    */
   handleTextSelection(event) {
-    this.log('debug', 'selection_event', { type: event?.type });
     if (!this.isEnabled) {
-      this.log('debug', 'ignored_disabled');
       return;
     }
 
     const selection = window.getSelection();
     const selectedText = selection.toString().trim();
-    this.log('debug', 'selected_text', { text: selectedText });
 
     if (selectedText.length === 0) {
-      this.log('debug', 'empty_selection');
       this.hidePopup();
       return;
     }
@@ -60,13 +44,8 @@ class TimeConvertor {
     // 检测是否为时间戳
     const timestampInfo = this.detectTimestamp(selectedText);
     if (timestampInfo) {
-      this.log('info', 'timestamp_detected', { info: {
-        ts: timestampInfo.timestamp,
-        unit: timestampInfo.unit
-      }});
       this.showPopup(event, selectedText, timestampInfo);
     } else {
-      this.log('debug', 'not_timestamp');
       this.hidePopup();
     }
   }
@@ -81,7 +60,6 @@ class TimeConvertor {
     const cleanText = text.replace(/[^\d]/g, '');
     
     if (cleanText.length === 0) {
-      this.log('debug', 'no_digits');
       return null;
     }
 
@@ -100,7 +78,6 @@ class TimeConvertor {
     const MIN_TIMESTAMP_SECONDS = 946684800; // 2000-01-01 00:00:00 UTC
     const MAX_TIMESTAMP_SECONDS = 4102444800; // 2100-01-01 00:00:00 UTC
     if (actualTimestamp < MIN_TIMESTAMP_SECONDS || actualTimestamp > MAX_TIMESTAMP_SECONDS) {
-      this.log('debug', 'out_of_range', { actualTimestamp });
       return null;
     }
 
@@ -117,7 +94,6 @@ class TimeConvertor {
         date: date
       };
     } catch (error) {
-      this.log('error', 'date_parse_error', { error: String(error) });
       return null;
     }
   }
@@ -140,8 +116,6 @@ class TimeConvertor {
 
     // 标记展示时间，避免随后紧接的 click 事件立刻关闭弹窗
     this.justShownAtMs = Date.now();
-
-    this.log('info', 'popup_shown');
   }
 
   /**
@@ -239,38 +213,43 @@ class TimeConvertor {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    // 如果事件没有坐标（如键盘选择），则根据选区定位
-    let left;
-    let top;
+    // 计算锚点（鼠标或选区），后续边界处理都基于该锚点，不再直接访问 event.pageX/Y
+    const MARGIN = 10;
+    let anchorX;
+    let anchorY;
     if (typeof event?.pageX === 'number' && typeof event?.pageY === 'number') {
-      left = event.pageX + 10;
-      top = event.pageY + 10;
+      anchorX = event.pageX;
+      anchorY = event.pageY;
     } else {
       const selection = window.getSelection();
       if (selection && selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
         const selRect = range.getBoundingClientRect();
-        left = selRect.left + window.scrollX + selRect.width / 2;
-        top = selRect.top + window.scrollY + selRect.height + 10;
+        anchorX = selRect.left + window.scrollX + selRect.width / 2;
+        anchorY = selRect.top + window.scrollY + selRect.height;
       } else {
-        left = 10;
-        top = 10;
+        anchorX = 10;
+        anchorY = 10;
       }
     }
 
-    // 防止弹窗超出视口右边界
-    if (left + rect.width > viewportWidth) {
-      left = event.pageX - rect.width - 10;
+    // 初始位置：锚点右下角
+    let left = anchorX + MARGIN;
+    let top = anchorY + MARGIN;
+
+    // 右边界：转到锚点左侧
+    if (left + rect.width > viewportWidth + window.scrollX) {
+      left = anchorX - rect.width - MARGIN;
     }
 
-    // 防止弹窗超出视口下边界
-    if (top + rect.height > viewportHeight) {
-      top = event.pageY - rect.height - 10;
+    // 下边界：转到锚点上方
+    if (top + rect.height > viewportHeight + window.scrollY) {
+      top = anchorY - rect.height - MARGIN;
     }
 
-    // 确保不超出左边界和上边界
-    left = Math.max(10, left);
-    top = Math.max(10, top);
+    // 最终兜底，防止越界
+    left = Math.max(window.scrollX + MARGIN, left);
+    top = Math.max(window.scrollY + MARGIN, top);
 
     popup.style.left = `${left}px`;
     popup.style.top = `${top}px`;
@@ -283,7 +262,6 @@ class TimeConvertor {
     if (this.popup) {
       this.popup.remove();
       this.popup = null;
-      this.log('debug', 'popup_hidden');
     }
   }
 
@@ -293,11 +271,9 @@ class TimeConvertor {
   handleClick(event) {
     const CLICK_SUPPRESS_MS = 200;
     if (Date.now() - this.justShownAtMs < CLICK_SUPPRESS_MS) {
-      this.log('debug', 'suppress_click_close');
       return;
     }
     if (this.popup && !this.popup.contains(event.target)) {
-      this.log('debug', 'outside_click_close');
       this.hidePopup();
     }
   }
@@ -319,7 +295,6 @@ class TimeConvertor {
     if (!enabled) {
       this.hidePopup();
     }
-    this.log('info', 'set_enabled', { enabled });
   }
 }
 
