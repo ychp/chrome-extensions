@@ -56,17 +56,19 @@ class TimeConvertor {
    * @returns {Object|null} - 时间戳信息或null
    */
   detectTimestamp(text) {
-    // 移除所有非数字字符，检查是否为纯数字
-    const cleanText = text.replace(/[^\d]/g, '');
+    const trimmedText = text.trim();
     
-    if (cleanText.length === 0) {
+    // 检查文本格式是否合理
+    const formatCheck = this.checkTimestampFormat(trimmedText);
+    if (!formatCheck.isValid) {
       return null;
     }
 
+    const cleanText = formatCheck.extractedNumber;
     const parsedNumber = parseInt(cleanText, 10);
 
     // 判断时间戳单位（秒或毫秒），先归一化到秒再做范围判断
-    const MILLIS_DIGITS_THRESHOLD = 12; // >=12位基本可判定为毫秒
+    const MILLIS_DIGITS_THRESHOLD = 12;
     let actualTimestamp = parsedNumber;
     let unit = 'seconds';
     if (cleanText.length >= MILLIS_DIGITS_THRESHOLD) {
@@ -75,8 +77,8 @@ class TimeConvertor {
     }
 
     // 合理范围（以秒为单位）
-    const MIN_TIMESTAMP_SECONDS = 946684800; // 2000-01-01 00:00:00 UTC
-    const MAX_TIMESTAMP_SECONDS = 4102444800; // 2100-01-01 00:00:00 UTC
+    const MIN_TIMESTAMP_SECONDS = 946684800;
+    const MAX_TIMESTAMP_SECONDS = 4102444800;
     if (actualTimestamp < MIN_TIMESTAMP_SECONDS || actualTimestamp > MAX_TIMESTAMP_SECONDS) {
       return null;
     }
@@ -96,6 +98,80 @@ class TimeConvertor {
     } catch (error) {
       return null;
     }
+  }
+
+  /**
+   * 检查时间戳格式是否有效
+   * @param {string} text - 选中的文本
+   * @returns {Object} - { isValid: boolean, extractedNumber: string }
+   */
+  checkTimestampFormat(text) {
+    // 纯数字：直接接受
+    if (/^\d+$/.test(text)) {
+      return { isValid: true, extractedNumber: text };
+    }
+
+    // 允许的常见格式：
+    // 1. 前缀为时间戳标识符: ts:1234567890, timestamp:1234567890
+    // 2. 单位后缀: 1234567890s, 1234567890ms, 1234567890000ms
+    // 3. 括号包围: (1234567890), [1234567890], {1234567890}
+    // 4. 前后有空格或常见标点: 1234567890, 1234567890.
+    
+    // 检查是否包含非数字字符
+    const hasNonDigits = /[^\d]/.test(text);
+    if (!hasNonDigits) {
+      return { isValid: true, extractedNumber: text };
+    }
+
+    // 提取数字部分
+    const numberMatch = text.match(/\d+/);
+    if (!numberMatch) {
+      return { isValid: false, extractedNumber: '' };
+    }
+
+    const extractedNumber = numberMatch[0];
+    const nonDigitParts = text.split(/\d+/).filter(part => part.length > 0);
+
+    // 如果没有非数字部分，说明是纯数字（已处理）
+    if (nonDigitParts.length === 0) {
+      return { isValid: true, extractedNumber };
+    }
+
+    // 检查非数字部分是否都是允许的字符
+    const allowedChars = /^[\s\[\]\{\}\(\)\.,;:\-_=]*$/;
+    const hasInvalidChars = nonDigitParts.some(part => !allowedChars.test(part));
+    
+    // 如果包含不允许的字符（如字母），检查是否是已知的时间戳前缀或单位后缀
+    if (hasInvalidChars) {
+      const lowerText = text.toLowerCase();
+      
+      // 检查是否是有效的时间戳前缀格式
+      const validPrefixPatterns = [
+        /^ts[:\s]?\d+/i,
+        /^timestamp[:\s]?\d+/i,
+        /^time[:\s]?\d+/i,
+        /^unix[:\s]?\d+/i,
+        /^unix[:\s]timestamp[:\s]?\d+/i
+      ];
+      
+      const hasValidPrefix = validPrefixPatterns.some(pattern => pattern.test(lowerText));
+      
+      // 检查是否是有效的单位后缀格式
+      const hasValidSuffix = /^\d+[sm]{1,2}(?:ec)?(?:onds)?(?:ec)?$/i.test(text) ||
+                             /^\d+ms$/i.test(text) ||
+                             /^\d+s$/i.test(text);
+
+      if (!hasValidPrefix && !hasValidSuffix) {
+        return { isValid: false, extractedNumber: '' };
+      }
+    }
+
+    // 最终检查：数字部分必须占文本的主要部分（至少50%）
+    if (extractedNumber.length < text.length * 0.5) {
+      return { isValid: false, extractedNumber: '' };
+    }
+
+    return { isValid: true, extractedNumber };
   }
 
   /**
